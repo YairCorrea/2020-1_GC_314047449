@@ -162,8 +162,7 @@ var CG = (function(CG) {
 			  * @return Matrix3
 			  * */
 			  static substract(m1,m2){
-				  //TODO: Swap m1 for m2 and + for -
-				  		   return (new Matrix3(m1.a00+m2.a00,m1.a01+m2.a01,m1.a02+m2.a02,m1.a10+m2.a10,m1.a11+m2.a11,m1.a12+m2.a12,m1.a20+m2.a20,m1.a21+m2.a21,m1.a22+m2.a22));
+				  		   return (new Matrix3(m1.a00-m2.a00,m1.a01-m2.a01,m1.a02-m2.a02,m1.a10-m2.a10,m1.a11-m2.a11,m1.a12-m2.a12,m1.a20-m2.a20,m1.a21-m2.a21,m1.a22-m2.a22));
 			  }
 			  /**
 			   * Devuelve la matriz transpuesta de la matriz desde donde se invoco la funcion
@@ -173,6 +172,6 @@ var CG = (function(CG) {
 				  return trans(this);
 			  }
 	  }
-  CG.Vector3 = Vector3;
+  CG.Matrix3 = Matrix3;
   return CG;
 })(CG || {});
