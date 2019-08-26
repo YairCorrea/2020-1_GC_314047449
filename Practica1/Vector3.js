@@ -17,9 +17,14 @@ var CG = (function(CG) {
 	   }
 	   /**
 	   * Regresa el angulo en radianes entre sus argumentos
+	   * @param Vector3 u
+	   * @param Vector3 v
 	   * */
 	   static angle(u,v){
-		
+			var magU=u.length();
+			var magV=v.length();
+			var productoPunto=this.dot(u,v);
+			return Math.acos(productoPunto/(magU*magV));
 		}
 		/**
 		 * Regresa un objeto con los mismos valores desde el que se invoco
@@ -53,7 +58,7 @@ var CG = (function(CG) {
 		   * @return Number
 		   * */
 		   static dot(u,v){
-			   return (u.x*v.x+u.y*v.y+u.z*v.z);
+			   return ((u.x*v.x)+(u.y*v.y)+(u.z*v.z);
 		   }
 		   /**
 		    * Devuelve verdadero en caso de que sus argumentos sean aproximadamente iguales, bajo e=0.000001. Falso en otro caso
