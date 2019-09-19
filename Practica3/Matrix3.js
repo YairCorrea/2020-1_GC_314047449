@@ -40,14 +40,14 @@ var CG = (function(CG) {
 			var det20= this.determinanteDos(this.a01,this.a12,this.a02,this.a11);
 			var det21= -this.determinanteDos(this.a00,this.a12,this.a02,this.a10);
 			var det22= this.determinanteDos(this.a00,this.a11,this.a01,this.a10);
-			return (new Matrix3(det00,det01,det02,det03,det10,det11,det12,det20,det21,det22));
+			return (new CG.Matrix3(det00,det01,det02,det10,det11,det12,det20,det21,det22));
 		}
 		 /**
 		  * Devuelve un objeto el cual tiene los mismos valores del que lo invoco.
 		  * @return Matrix3
 		  * */
 		 clone(){
-			 return (new Matrix3(this.a00,this.a01,this.a02,this.a10,this.a11,this.a12,this.a20,this.a21,this.a22));
+			 return (new CG.Matrix3(this.a00,this.a01,this.a02,this.a10,this.a11,this.a12,this.a20,this.a21,this.a22));
 		 }
 		 /**
 		  * Devuelve el determinante de la matriz que lo invoco.
@@ -121,28 +121,28 @@ var CG = (function(CG) {
 				 var novo20=(m1.a20*m2.a00)+(m1.a21*m2.a10)+(m1.a22*m2.a20);
 				 var novo21=(m1.a20*m2.a01)+(m1.a21*m2.a11)+(m1.a22*m2.a21);
 				 var novo22=(m1.a20*m2.a02)+(m1.a21*m2.a12)+(m1.a22*m2.a22);
-				 return (new Matrix3(novo00,novo01,novo02,novo10,novo11,novo12,novo20,novo21,novo22));
+				 return (new CG.Matrix3(novo00,novo01,novo02,novo10,novo11,novo12,novo20,novo21,novo22));
 			 }
 			 /**
 			  * Devuelve una matriz resultado de multiplicar cada componente por un escalar
-			  * @param Matrix3 m1
-			  * @param Number c
 			  * @return Matrix3
+			  * @param m1
+			  * @param c
 			  * */
 			 static multiplyScalar(m1,c){
-				return (new Matrix3(m1.a00*c,m1.a01*c,m1.a02*c,m1.a10*c,m1.a11*c,m1.a12*c,m1.a20*c,m1.a21*c,m1.a22*c)); 
+				return (new CG.Matrix3(m1.a00*c,m1.a01*c,m1.a02*c,m1.a10*c,m1.a11*c,m1.a12*c,m1.a20*c,m1.a21*c,m1.a22*c));
 			 }
 			 /**
 			  * Asigna nuevos valores a los componentes en la matriz con la que se llama
-			  * @param Number a00
-			  * @param Number a01
-			  * @param Number a02
-			  * @param Number a10
-			  * @param Number a11
-			  * @param Number a12
-			  * @param Number a20
-			  * @param Number a21
-			  * @param Number a22
+			  * @param a00
+			  * @param a01
+			  * @param a02
+			  * @param a10
+			  * @param a11
+			  * @param a12
+			  * @param a20
+			  * @param a21
+			  * @param a22
 			  * */
 			  set(a00,a01,a02,a10,a11,a12,a20,a21,a22){
 				  this.a00=a00;
@@ -156,20 +156,59 @@ var CG = (function(CG) {
 				  this.a22=a22;
 			  }			  
 			  /**
-			  * Sustrae m2 de m1
-			  * @param Matrix3 m1
-			  * @param Matrix3 m2
-			  * @return Matrix3
-			  * */
+			   * Sustrae m2 de m1
+			   * @return Matrix3
+			   * @param m1
+			   * @param m2
+			   * */
 			  static substract(m1,m2){
-				  		   return (new Matrix3(m1.a00-m2.a00,m1.a01-m2.a01,m1.a02-m2.a02,m1.a10-m2.a10,m1.a11-m2.a11,m1.a12-m2.a12,m1.a20-m2.a20,m1.a21-m2.a21,m1.a22-m2.a22));
+				  		   return (new CG.Matrix3(m1.a00-m2.a00,m1.a01-m2.a01,m1.a02-m2.a02,m1.a10-m2.a10,m1.a11-m2.a11,m1.a12-m2.a12,m1.a20-m2.a20,m1.a21-m2.a21,m1.a22-m2.a22));
 			  }
 			  /**
 			   * Devuelve la matriz transpuesta de la matriz desde donde se invoco la funcion
 			   * @return Matrix3 
 			   * */	
 			  transpose(){
-				  return trans(this);
+				  return this.trans(this);
+			  }
+			  /**
+			   *
+			   *
+			   * @returns {Vector3}
+			   */
+			  multiplyVector(vector){
+			  	//TODO:The method.
+			  	return new CG.Vector3(42,42,42);
+			  }
+
+	  /**
+	   *
+	   * @param rad
+	   * @returns {Matrix3}
+	   */
+			  static rotate(rad){
+			  	//TODO:The method
+			  	return new CG.Matrix3(42,42,42);
+			  }
+
+	  /**
+	   *
+	   * @param sx
+	   * @param sy
+	   * @returns {Matrix3}
+	   */
+			  static scale(sx,sy){
+			  	return new CG.Matrix3(42,42,42);
+			  }
+
+	  /**
+	   *
+	   * @param tx
+	   * @param ty
+	   * @returns {Matrix3}
+	   */
+			  static translate(tx,ty){
+			  	return new CG.Matrix3(42,42,42);
 			  }
 	  }
   CG.Matrix3 = Matrix3;

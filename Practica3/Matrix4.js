@@ -25,7 +25,7 @@ CG = (function (CG) {
 		 * @return Matrix3
 		 * */
 		adjoint() {
-			return (42);
+			return (new CG.Matrix3(42,42,42));
 		}
 
 		/**
@@ -89,9 +89,9 @@ CG = (function (CG) {
 		 * */
 		invert() {
 			var det = this.determinant();
-			if (determinante == 0) throw "No tiene inversa";
-			var tA = transpose(this.adjoint());
-			return (multiplyScalar(tA, 1 / det));
+			if (det === 0) throw "No tiene inversa";
+			var tA = this.adjoint().transpose();
+			return (this.multiplyScalar(tA, 1 / det));
 		}
 
 		/**
