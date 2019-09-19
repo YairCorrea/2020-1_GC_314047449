@@ -1,16 +1,17 @@
 var CG = (function(CG) {
   class Matrix3{
-	  constructor(){
-		  this.identity();
-		}
 	  constructor(a00,a01,a02,a10,a11,a12,a20,a21,a22){
-		  this.set(a00,a01,a02,a10,a11,a12,a20,a21,a22);
+		 if(typeof a00!=="undefined"){
+		 	this.set(a00,a01,a02,a10,a11,a12,a20,a21,a22);
+		 }else{
+		 	this.identity();
+		 }
 	  }
 	  /**
 	   * Devuelve la suma de dos matrices
-	   * @param Matrix3 m1
-	   * @param Matrix3 m2
 	   * @return Matrix3
+	   * @param m1
+	   * @param m2
 	   * */	  
 	   static add(m1,m2){
 		   return (new Matrix3(m1.a00+m2.a00,m1.a01+m2.a01,m1.a02+m2.a02,m1.a10+m2.a10,m1.a11+m2.a11,m1.a12+m2.a12,m1.a20+m2.a20,m1.a21+m2.a21,m1.a22+m2.a22));
@@ -61,20 +62,20 @@ var CG = (function(CG) {
 		  }
 		  /**
 		   * Devuelve verdadero si es aproxiamadamente igual. Bajo e=0.000001 y falso en otro caso.
-		   * @param Matrix3 m1
-		   * @param Matrix3 m2
 		   * @return Boolean
 		   * Am... tenia sentido en vectores, pero en matrices? No se batman...Es un exactEqual aqui
+		   * @param m1
+		   * @param m2
 		   * */
 		   static equals(m1,m2){
 			   return ((m1.a00===m2.a00)&&(m1.a01===m2.a01)&&(m1.a02===m2.a02)&&(m1.a10===m2.a10)&&(m1.a11===m2.a11)&&(m1.a12===m2.a12)&&(m1.a20===m2.a20)&&(m1.a21===m2.a21)&&(m1.a22===m2.a22));
 		   }
 		   /**
-		    * Devuelve verdadero si son exactamente iguales sus argumentos.
-		    * @param Matrix3 m1
-		    * @param Matrix3 m2
-		    * @return Boolean
-		    * */
+			* Devuelve verdadero si son exactamente iguales sus argumentos.
+			* @return Boolean
+			* @param m1
+			* @param m2
+			* */
 		    static exactEquals(m1,m2){
 			   return ((m1.a00===m2.a00)&&(m1.a01===m2.a01)&&(m1.a02===m2.a02)&&(m1.a10===m2.a10)&&(m1.a11===m2.a11)&&(m1.a12===m2.a12)&&(m1.a20===m2.a20)&&(m1.a21===m2.a21)&&(m1.a22===m2.a22));
 		   }
@@ -94,21 +95,21 @@ var CG = (function(CG) {
 				var det=this.determinant();
 				if(det===0) throw "No tiene inversa";
 				var tA=this.trans(this.adjoint());
-				return (this.multiplyScalar(tA,1/det));
+				return (CG.Matrix3.multiplyScalar(tA,1/det));
 			}
 			/**
 			 * Devuelve la matriz transpuesta.
-			 * @param Matrix3 m1
-			 * @return Matrix3 
+			 * @return Matrix3
+			 * @param m1
 			 * */
 			 trans(m1){
 				 return (new Matrix3(m1.a00,m1.a10,m1.a20,m1.a01,m1.a11,m1.a21,m1.a02,m1.a12,m1.a22));
 			 }
 			/**
 			 * Devuelve la multiplicacion de dos matrices
-			 * @param Matrix3 m1
-			 * @param Matrix3 m2
 			 * @return Matrix3
+			 * @param m1
+			 * @param m2
 			 * */
 			 static multiply(m1,m2){
 				 //Pero podrias haber hecho un ciclo aqui que lo hiciera cuadratico y usar un arreglo. No se que se ve peor. El monton de variables o los como 3 fors que eso hubiera generado.
@@ -154,7 +155,7 @@ var CG = (function(CG) {
 				  this.a20=a20;
 				  this.a21=a21;
 				  this.a22=a22;
-			  }			  
+			  }
 			  /**
 			   * Sustrae m2 de m1
 			   * @return Matrix3
@@ -177,8 +178,7 @@ var CG = (function(CG) {
 			   * @returns {Vector3}
 			   */
 			  multiplyVector(vector){
-			  	//TODO:The method.
-			  	return new CG.Vector3(42,42,42);
+			  	return new CG.Vector3((this.a00*vector.x)+(this.a10*vector.y)+(this.a20*vector.z),(this.a01*vector.x)+(this.a11*vector.y)+(this.a21*vector.z),(this.a02*vector.x)+(this.a12*vector.y)+(this.a22*vector.z));
 			  }
 
 	  /**
@@ -188,7 +188,7 @@ var CG = (function(CG) {
 	   */
 			  static rotate(rad){
 			  	//TODO:The method
-			  	return new CG.Matrix3(42,42,42);
+			  	return new CG.Matrix3(Math.cos(rad),Math.sin(rad),0,-Math.sin(rad),Math.cos(rad),0,0,0,1);
 			  }
 
 	  /**
@@ -198,7 +198,7 @@ var CG = (function(CG) {
 	   * @returns {Matrix3}
 	   */
 			  static scale(sx,sy){
-			  	return new CG.Matrix3(42,42,42);
+			  	return new CG.Matrix3(sx,0,0,0,sy,0,0,0,1);
 			  }
 
 	  /**
@@ -208,7 +208,7 @@ var CG = (function(CG) {
 	   * @returns {Matrix3}
 	   */
 			  static translate(tx,ty){
-			  	return new CG.Matrix3(42,42,42);
+			  	return new CG.Matrix3(1,0,0,0,1,0,tx,ty,1);
 			  }
 	  }
   CG.Matrix3 = Matrix3;

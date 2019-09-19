@@ -1,10 +1,11 @@
 var CG = (function(CG) {
   class Vector4{
-	  constructor(){
-		  this.zero();
-	  }
 	  constructor(x,y,z,w){
-		  this.set(x,y,z,w);
+	  	if(typeof x!== "undefined"){
+	  		this.set(x,y,z,w);
+		}else{
+	  		this.zero();
+		}
 	  }
 	   /**
 	   * Regresa la suma de dos vectores (x,y,z)+(x1,y1,z1)=(x+x1,y+y1,z+z1)
@@ -48,7 +49,7 @@ var CG = (function(CG) {
 		    * */
 		    static equals(u,v){
 				var e=0.000001;
-				return (distance(u,v)=<e);
+				return (this.distance(u,v)<=e);
 			}
 			/**
 			 * Devuelve verdadero en caso de que sus argumentos sean exactamente iguales
@@ -57,14 +58,14 @@ var CG = (function(CG) {
 			 * @return Boolean
 			 * */
 			 static exactEquals(u,v){
-				 return ((u.x==v.x)&&(u.y==v.y)&&(u.z==v.z)&&(u.w==v.w));
+				 return ((u.x===v.x)&&(u.y===v.y)&&(u.z===v.z)&&(u.w===v.w));
 			 }
 			 			 /**
 			  * Devuelve la longitud del vector.
 			  * @return Number
 			  * */
 			  length(){
-				  return (Math.sqrt(Math.pow(this.x,2)+Math.pow(this.y,2)+Math.pow(this.z,2)+Math.pow(this.w,2));
+				  return (Math.sqrt(Math.pow(this.x,2)+Math.pow(this.y,2)+Math.pow(this.z,2)+Math.pow(this.w,2)));
 			  }
 			  			  /**
 			   * Devuelve el vector resultado de la normalizacion del vector que la invoca.

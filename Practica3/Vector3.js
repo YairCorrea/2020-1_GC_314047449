@@ -1,10 +1,11 @@
 var CG = (function(CG) {
   class Vector3{
-	  constructor(){
-		  this.zero();
-	  }
 	  constructor(x,y,z){
-		  this.set(x,y,z);
+		  if(typeof x!=="undefined"){
+		  	this.set(x,y,z);
+		  }else{
+		  	this.zero();
+		  }
 	  }
 	  /**
 	   * Regresa la suma de dos vectores (x,y,z)+(x1,y1,z1)=(x+x1,y+y1,z+z1)
@@ -58,7 +59,7 @@ var CG = (function(CG) {
 		   * @return Number
 		   * */
 		   static dot(u,v){
-			   return ((u.x*v.x)+(u.y*v.y)+(u.z*v.z);
+			   return ((u.x*v.x)+(u.y*v.y)+(u.z*v.z));
 		   }
 		   /**
 		    * Devuelve verdadero en caso de que sus argumentos sean aproximadamente iguales, bajo e=0.000001. Falso en otro caso
@@ -68,7 +69,7 @@ var CG = (function(CG) {
 		    * */
 		    static equals(u,v){
 				var e=0.000001;
-				return (distance(u,v)=<e);
+				return (this.distance(u,v)<=e);
 			}
 			/**
 			 * Devuelve verdadero en caso de que sus argumentos sean exactamente iguales
@@ -77,7 +78,7 @@ var CG = (function(CG) {
 			 * @return Boolean
 			 * */
 			 static exactEquals(u,v){
-				 return ((u.x==v.x)&&(u.y==v.y)&&(u.z==v.z));
+				 return ((u.x===v.x)&&(u.y===v.y)&&(u.z===v.z));
 			 }
 			 /**
 			  * Devuelve la longitud del vector.

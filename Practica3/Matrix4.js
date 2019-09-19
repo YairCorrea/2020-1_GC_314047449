@@ -1,12 +1,12 @@
 var CG;
 CG = (function (CG) {
 	class Matrix4 {
-		constructor() {
-			this.identity();
-		}
-
 		constructor(a00, a01, a02, a03, a10, a11, a12, a13, a20, a21, a22, a23, a30, a31, a32, a33) {
-			this.set(a00, a01, a02, a10, a11, a12, a20, a21, a22, a23, a30, a31, a32, a33);
+			if(typeof a00!=="undefined"){
+				this.set(a00, a01, a02, a10, a11, a12, a20, a21, a22, a23, a30, a31, a32, a33);
+			}else{
+				this.identity();
+			}
 		}
 
 		static add(m1, m2) {
@@ -22,7 +22,7 @@ CG = (function (CG) {
 
 		/**
 		 * Devuelve la matriz adjunta, de la matriz con la que se invoca la funcion
-		 * @return Matrix3
+		 * @return Matrix4
 		 * */
 		adjoint() {
 			return (new CG.Matrix3(42,42,42));
@@ -67,7 +67,7 @@ CG = (function (CG) {
 		static exactEquals(m1, m2) {
 			var i;
 			for (i = 0; i < 16; i++) {
-				if (m1.arreglo[i] != m2.arreglo[i]) {
+				if (m1.arreglo[i] !== m2.arreglo[i]) {
 					return false;
 				}
 			}
@@ -91,7 +91,7 @@ CG = (function (CG) {
 			var det = this.determinant();
 			if (det === 0) throw "No tiene inversa";
 			var tA = this.adjoint().transpose();
-			return (this.multiplyScalar(tA, 1 / det));
+			return (CG.Matrix4.multiplyScalar(tA, 1 / det));
 		}
 
 		/**
@@ -101,13 +101,13 @@ CG = (function (CG) {
 		 * @return Matrix4
 		 * */
 		static multiply(m1, m2) {
-			var i;
-			var x;
-			var y;
-			var resultado = new Matrix4(0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0);
+			let i;
+			let x;
+			let y;
+			let resultado = new Matrix4(0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0);
 			for (i = 0; i < 4; i++) {
 				for (x = 0; x < 4; x++) {
-					var arrayLocal = (i * 4) + x;
+					let arrayLocal = (i * 4) + x;
 					for (y = 0; y < 4; y++) {
 						resultado.arreglo[arrayLocal] = m1.arreglo[(i * 4) + y] * m2.arreglo[(y * 4) + x];
 					}
@@ -123,14 +123,12 @@ CG = (function (CG) {
 		 * @return Matrix4
 		 * */
 		static multiplyScalar(m1, c) {
-			var resultado = new Matrix4();
-			var tmp = m1.arreglo;
-			tmp.forEach(foo(bar)
+			let resultado = new Matrix4();
+			let tmp = m1.arreglo;
+			tmp.forEach(function foo(bar)
 			{
 				bar *= c;
-			}
-		)
-			;
+			});
 			resultado.arreglo = tmp;
 			return resultado;
 		}
@@ -202,22 +200,26 @@ CG = (function (CG) {
 		 * @param eye
 		 * @param center
 		 * @param up
-		 * @returns {number}
+		 * @returns {Matrix4}
 		 */
 		static lookAt(eye,center,up){
-			//TODO: The method.
-			return 42;
+			let ejeZ=(new CG.Vector3(eye.x-center.x,eye.y-center.y,eye.z-center.z)).normalize();
+			let ejeX=CG.Vector3.cross(up,ejeZ).normalize();
+			let ejeY=CG.Vector3.cross(ejeZ,ejeX);
+			let orientation=new CG.Matrix4(ejeX.x,ejeX.y,ejeX.z,0,ejeY.x,ejeY.y,ejeY.z,0,ejeZ.x,ejeZ.y,ejeZ.z,0,0,0,0,1);
+			let translacion=new CG.Matrix4(1,0,0,-eye.x,0,1,0,-eye.y,0,0,1,-eye.z,0,0,0,1);
+			return CG.Matrix4.multiply(orientation,translacion);
 		}
 		/**
 		 * @param {Vector4} v
 		 * @return {Vector4}
 		 */
 		multiplyVector(v) {
-			var x = (v.x * this.a00) + (v.x * this.a10) + (v.x * this.a20) + (v.x * this.a30);
-			var y = (v.y * this.a01) + (v.y * this.a11) + (v.y * this.a21) + (v.y * this.a31);
-			var z = (v.z * this.a02) + (v.z * this.a12) + (v.z * this.a22) + (v.z * this.a32);
-			var w = (v.w * this.a03) + (v.w * this.a13) + (v.w * this.a23) + (v.w * this.a33);
-			return vec = new CG.Vector4(x, y, z, w);
+			let x = (v.x * this.arreglo[0]) + (v.x * this.arreglo[4]) + (v.x * this.arreglo[8]) + (v.x * this.arreglo[12]);
+			let y = (v.y * this.arreglo[1]) + (v.y * this.arreglo[5]) + (v.y * this.arreglo[9]) + (v.y * this.arreglo[13]);
+			let z = (v.z * this.arreglo[2]) + (v.z * this.arreglo[6]) + (v.z * this.arreglo[10]) + (v.z * this.arreglo[14]);
+			let w = (v.w * this.arreglo[3]) + (v.w * this.arreglo[7]) + (v.w * this.arreglo[11]) + (v.w * this.arreglo[15]);
+			return new CG.Vector4(x, y, z, w);
 		}
 
 		/**
@@ -230,8 +232,7 @@ CG = (function (CG) {
 		 * @param far
 		 */
 		static ortho(left,right,bottom,top,near,far){
-			//TODO:The method.
-			return 42;
+			return new CG.Matrix4(2/(right-left),0,0,(-right+left)/(right-left),0,2/(top-bottom),0,(-top+bottom)/(top-bottom),0,0,1/(far-near),-near/(far-near),0,0,0,1);
 		}
 
 		/**
@@ -242,8 +243,8 @@ CG = (function (CG) {
 		 * @param far
 		 */
 		static perspective(fovy,aspect,near,far){
-			//TODO:The method.
-			return 42;
+			let S= 1/ Math.tan((fovy/2));
+			return new CG.Matrix4(S,0,0,0,0,S,0,0,0,0,-far/(far-near),-(far*near)/(far-near),0,0,-1,0);
 		}
 
 		/**
@@ -251,7 +252,7 @@ CG = (function (CG) {
 		 * @return {Matrix4}
 		 */
 		static rotateX(rad) {
-			return matr4 = new Matrix4(1, 0, 0, 0, 0, cos(red), sin(rad), 0, 0, -sin(rad), cos(rad), 0, 0, 0, 0, 1);
+			return new CG.Matrix4(1, 0, 0, 0, 0, Math.cos(rad), Math.sin(rad), 0, 0, -Math.sin(rad), Math.cos(rad), 0, 0, 0, 0, 1);
 		}
 
 		/**
@@ -259,7 +260,7 @@ CG = (function (CG) {
 		 * @return {Matrix4}
 		 */
 		static rotateY(rad) {
-			return matr4 = new Matrix4(cos(rad), 0, -sin(rad), 0, 0, 1, 0, 0, sin(rad), 0, cos(rad), 0, 0, 0, 0, 1);
+			return new CG.Matrix4(Math.cos(rad), 0, -Math.sin(rad), 0, 0, 1, 0, 0, Math.sin(rad), 0, Math.cos(rad), 0, 0, 0, 0, 1);
 		}
 
 		/**
@@ -267,7 +268,7 @@ CG = (function (CG) {
 		 * @return {Matrix4}
 		 */
 		static rotateZ(rad) {
-			return matr4 = new Matrix4(cos(rad), sin(rad), 0, 0, -sin(rad), cos(rad), 0, 0, 0, 0, 1, 0, 0, 0, 0, 1);
+			return new CG.Matrix4(Math.cos(rad),-Math.sin(rad), 0, 0, -Math.sin(rad), Math.cos(rad), 0, 0, 0, 0, 1, 0, 0, 0, 0, 1);
 		}
 
 		/**
@@ -275,7 +276,7 @@ CG = (function (CG) {
 		 * @return {Matrix4}
 		 */
 		static scale(v) {
-			return matr4 = new Matrix4(v.x, 0, 0, 0, 0, v.y, 0, 0, 0, 0, v.z, 0, 0, 0, 0, 1);
+			return new CG.Matrix4(v.x, 0, 0, 0, 0, v.y, 0, 0, 0, 0, v.z, 0, 0, 0, 0, 1);
 		}
 
 		/**
@@ -283,7 +284,7 @@ CG = (function (CG) {
 		 * @return {Matrix4}
 		 */
 		static translate(v) {
-			return matr4 = new Matrix4(1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, v.x, v.y, v.z, 1);
+			return new CG.Matrix4(1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, v.x, v.y, v.z, 1);
 		}
 	}
 
