@@ -208,8 +208,6 @@ CG = (function (CG) {
 			let ejeY=CG.Vector3.cross(ejeZ,ejeX);
 			let orientation=new CG.Matrix4(ejeX.x,ejeX.y,ejeX.z,0,ejeY.x,ejeY.y,ejeY.z,0,ejeZ.x,ejeZ.y,ejeZ.z,0,0,0,0,1);
 			let translacion=new CG.Matrix4(1,0,0,-eye.x,0,1,0,-eye.y,0,0,1,-eye.z,0,0,0,1);
-			console.log(orientation);
-			console.log(translacion);
 			return CG.Matrix4.multiply(orientation,translacion);
 		}
 		/**

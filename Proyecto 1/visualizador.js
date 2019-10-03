@@ -5,6 +5,7 @@ window.addEventListener("load", function(evt) {
     let valorX=document.getElementById("x");
     let valorY=document.getElementById("y");
     let valorZ=document.getElementById("z");
+    let fil;
     /**
      * Funcion que lee una linea y altera el entorno para representar los datos contenidos en esta.
      * @param line  Una sola linea del archivo OBJ.
@@ -17,15 +18,18 @@ window.addEventListener("load", function(evt) {
         let le=line.split(' ');
         switch (le[0]) {
             case "v":
+                let x=parseFloat(le[1]);
                 dataStruct[0].push(le[1]);
-                if(le[1]>dataStruct[4][0])dataStruct[4][0]=le[1];
-                if(le[1]<dataStruct[5][0])dataStruct[5][0]=le[1];
-                dataStruct[1].push(le[2]);
-                if(le[2]>dataStruct[4][1])dataStruct[4][1]=le[2];
-                if(le[2]<dataStruct[5][1])dataStruct[5][1]=le[2];
-                dataStruct[2].push(le[3]);
-                if(le[3]>dataStruct[4][2])dataStruct[4][2]=le[3];
-                if(le[3]<dataStruct[5][2])dataStruct[5][2]=le[3];
+                if(x>dataStruct[4][0])dataStruct[4][0]=x;
+                if(x<dataStruct[5][0])dataStruct[5][0]=x;
+                let y=parseFloat(le[2]);
+                dataStruct[1].push(y);
+                if(y>dataStruct[4][1])dataStruct[4][1]=y;
+                if(y<dataStruct[5][1])dataStruct[5][1]=y;
+                let z=parseFloat(le[3]);
+                dataStruct[2].push(z);
+                if(z>dataStruct[4][2])dataStruct[4][2]=z;
+                if(z<dataStruct[5][2])dataStruct[5][2]=z;
                 break;
             case "f":
                 dataStruct[3].push([le[1].split('/')[0],le[2].split('/')[0],le[3].split('/')[0]]);
@@ -69,8 +73,8 @@ window.addEventListener("load", function(evt) {
         let Xmax=dataStruct[4][0];
         let Ymax=dataStruct[4][1];
        for(let i=0;i<verteX.length;i++){
-           verteX[i]=((verteX[i]-Xmin)/(Xmax-Xmin));
-           verteY[i]=((verteY[i]-Ymin)/(Ymax-Ymin));
+           verteY[i]=(maYScreen*(verteY[i]-Ymin)/(Ymax-Ymin))-Ymax;
+           verteX[i]=(maXScreen*(verteX[i]-Xmin)/(Xmax-Xmin))-Xmax;
        }
        return dataStruct;
     }
@@ -86,19 +90,24 @@ window.addEventListener("load", function(evt) {
         let minX=dataStruct[5][0];
         let minY=dataStruct[5][1];
         let minZ=dataStruct[5][2];
+        let maxX=dataStruct[4][0];
+        let maxY=dataStruct[4][1];
+        let maxZ=dataStruct[4][2];
+        let trans=CG.Matrix4.translate(new CG.Vector3(-minX,-minY,-minZ));
         for(let i=0;i<verteX.length;i++){
-            let trans=CG.Matrix4.translate(new CG.Vector3(-minX,-minY,-minZ));
             let tmp=trans.multiplyVector(new CG.Vector4(verteX[i],verteY[i],verteZ[i],1));
             verteX[i]=tmp.x;
             verteY[i]=tmp.y;
             verteZ[i]=tmp.z;
         }
-        dataStruct[4][0]-=minX;
-        dataStruct[4][1]-=minY;
-        dataStruct[4][2]-=minZ;
-        minX=0;
-        minY=0;
-        minZ=0;
+        let tmp=trans.multiplyVector(new CG.Vector4(maxX,maxY,maxZ,1));
+        maxX=tmp.x;
+        maxY=tmp.y;
+        maxZ=tmp.z;
+        let tm=trans.multiplyVector(new CG.Vector4(minX,minY,minZ,1));
+        minX=tm.x;
+        minY=tm.y;
+        minZ=tm.z;
         return dataStruct;
     }
     function viewTransform(dataStruct) {
@@ -126,9 +135,9 @@ window.addEventListener("load", function(evt) {
         maxY=tmp.y;
         maxZ=tmp.z;
         let tm=lineOf.multiplyVector(new CG.Vector4(minX,minY,minZ,1));
-        minX=tmp.x;
-        minY=tmp.y;
-        minZ=tmp.z;
+        minX=tm.x;
+        minY=tm.y;
+        minZ=tm.z;
         return dataStruct;
     }
    function frustumView(dataStruct) {
@@ -148,7 +157,50 @@ window.addEventListener("load", function(evt) {
            verteY[foo]=bar.y;
            verteZ[foo]=bar.z;
        }
+       let tmp=frust.multiplyVector(new CG.Vector4(maxX,maxY,maxZ,1));
+       maxX=tmp.x;
+       maxY=tmp.y;
+       maxZ=tmp.z;
+       let tm=frust.multiplyVector(new CG.Vector4(minX,minY,minZ,1));
+       minX=tm.x;
+       minY=tm.y;
+       minZ=tm.z;
        return dataStruct;
+   }
+   function perspectivePro(dataStruct) {
+       let verteX=dataStruct[0];
+       let verteY=dataStruct[1];
+       let verteZ=dataStruct[2];
+       let minX=dataStruct[5][0];
+       let minY=dataStruct[5][1];
+       let minZ=dataStruct[5][2];
+       let maxX=dataStruct[4][0];
+       let maxY=dataStruct[4][1];
+       let maxZ=dataStruct[4][2];
+       let frust=CG.Matrix4.perspective(.5,(maxX-minX)*canvas.width/(maxY-minY)*canvas.height,minZ,maxZ);
+       for(let foo=0;foo<verteX.length;foo++){
+           let bar=frust.multiplyVector(new CG.Vector4(verteX[foo],verteY[foo],verteZ[foo],1));
+           verteX[foo]=bar.x;
+           verteY[foo]=bar.y;
+           verteZ[foo]=bar.z;
+       }
+       let tmp=frust.multiplyVector(new CG.Vector4(maxX,maxY,maxZ,1));
+       maxX=tmp.x;
+       maxY=tmp.y;
+       maxZ=tmp.z;
+       let tm=frust.multiplyVector(new CG.Vector4(minX,minY,minZ,1));
+       minX=tm.x;
+       minY=tm.y;
+       minZ=tm.z;
+       return dataStruct;
+   }
+   function ejecuta() {
+       let parsedData=aMundo(fil);
+       parsedData=viewTransform(parsedData);
+       parsedData=frustumView(parsedData);
+       parsedData=perspectivePro(parsedData);
+       parsedData=proyeccionAViewPort(parsedData,canvas.width,canvas.height);
+       draw(parsedData);
    }
     /**
      * Podria decirse main. Cuando alguien mete un archivo, crea un nuevo entorno y le aplica el procedimiento hasta dibujarlo en el canvas.
@@ -157,29 +209,28 @@ window.addEventListener("load", function(evt) {
         let files = evt.target.files;
         let reader = new FileReader();
         reader.onload = function(reader_evt) {
-            let lines = reader_evt.target.result.split('\n');
-            let faces=[];
-            let verteX=[];
-            let verteY=[];
-            let verteZ=[];
-            let biggestBoi=[0,0,0];
-            let smollBoi=[0,0,0];
-            let parsedData=[verteX,verteY,verteZ,faces,biggestBoi,smollBoi];
-            for(let line=0;line < lines.length;line++){
-                parsedData=parse(lines[line],parsedData);
-            }
-            parsedData=aMundo(parsedData);
-            parsedData=viewTransform(parsedData);
-            parsedData=frustumView(parsedData);
-            parsedData=proyeccionAViewPort(parsedData,canvas.width,canvas.height);
-            draw(parsedData);
+                let lines = reader_evt.target.result.split('\n');
+                let faces = [];
+                let verteX = [];
+                let verteY = [];
+                let verteZ = [];
+                let biggestBoi = [0, 0, 0];
+                let smollBoi = [0, 0, 0];
+                let parsedData = [verteX, verteY, verteZ, faces, biggestBoi, smollBoi];
+                for (let line = 0; line < lines.length; line++) {
+                    fil = parse(lines[line], parsedData);
+                }
+                ejecuta();
         };
         if (files.length > 0) {
             reader.readAsText(files[0]);
         }
     }
+    function uList(evt){
+        ejecuta();
+    }
     file_input.addEventListener("change",cambios);
-    valorX.addEventListener("change",cambios);
-    valorY.addEventListener("change",cambios);
-    valorZ.addEventListener("change",cambios);
+    valorX.addEventListener("change",uList);
+    valorY.addEventListener("change",uList);
+    valorZ.addEventListener("change",uList);
 });

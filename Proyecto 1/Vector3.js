@@ -2,7 +2,7 @@ var CG = (function(CG) {
   class Vector3{
 	  constructor(x,y,z){
 		  if(typeof x!=="undefined"){
-		  	this.set(x,y,z);
+			  this.set(x,y,z);
 		  }else{
 		  	this.zero();
 		  }
@@ -85,16 +85,16 @@ var CG = (function(CG) {
 			  * @return Number
 			  * */
 			  length(){
-				  return (Math.sqrt(Math.pow(this.x,2)+Math.pow(this.y,2)+Math.pow(this.z,2)));
+			  	let tmp=this.squaredLength();
+				 return Math.sqrt(tmp);
 			  }
 			  /**
 			   * Devuelve el vector resultado de la normalizacion del vector que la invoca.
 			   * @return Vector3
 			   * */
 			  normalize(){
-				  let longitud=this.length();
-				  console.log(longitud);
-				  return (new CG.Vector3(this.x/longitud,this.y/longitud,this.z/longitud));
+				  let longitud=this.squaredLength();
+				  return (new CG.Vector3(Math.pow(this.x,2)/longitud,Math.pow(this.y,2)/longitud,Math.pow(this.z,2)/longitud));
 			  }
 			  /**
 			   * Asigna nuevos valores a los componentes del vector con que se llama
@@ -102,10 +102,10 @@ var CG = (function(CG) {
 			   * @param Number y
 			   * @param Number z
 			   * */
-			  set(x,y,z){
-				  this.x=x;
-				  this.y=y;
-				  this.z=z;
+			  set(xd,yd,zd){
+				  this.x=xd;
+				  this.y=yd;
+				  this.z=zd;
 			  }
 			  /**
 			   * Devuelve la distancia euclidiana al cuadrado que hay entre sus argumentos
