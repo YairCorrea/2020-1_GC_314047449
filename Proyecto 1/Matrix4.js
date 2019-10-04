@@ -215,14 +215,13 @@ CG = (function (CG) {
 		 * @return {Vector4}
 		 */
 		multiplyVector(v) {
-			let x = (v.x * this.arreglo[0]) + (v.x * this.arreglo[4]) + (v.x * this.arreglo[8]) + (v.x * this.arreglo[12]);
-			let y = (v.y * this.arreglo[1]) + (v.y * this.arreglo[5]) + (v.y * this.arreglo[9]) + (v.y * this.arreglo[13]);
-			let z = (v.z * this.arreglo[2]) + (v.z * this.arreglo[6]) + (v.z * this.arreglo[10]) + (v.z * this.arreglo[14]);
-			let w = (v.w * this.arreglo[3]) + (v.w * this.arreglo[7]) + (v.w * this.arreglo[11]) + (v.w * this.arreglo[15]);
+			let x = (v.x * this.arreglo[0]) + (v.y * this.arreglo[4]) + (v.z * this.arreglo[8]) + (v.w * this.arreglo[12]);
+			let y = (v.x * this.arreglo[1]) + (v.y * this.arreglo[5]) + (v.z * this.arreglo[9]) + (v.w * this.arreglo[13]);
+			let z = (v.x * this.arreglo[2]) + (v.y * this.arreglo[6]) + (v.z * this.arreglo[10]) + (v.w * this.arreglo[14]);
+			let w = (v.x * this.arreglo[3]) + (v.y * this.arreglo[7]) + (v.z * this.arreglo[11]) + (v.w * this.arreglo[15]);
 			let tmp=new CG.Vector4(x, y, z, w);
 			return (tmp);
 		}
-
 		/**
 		 *
 		 * @param left

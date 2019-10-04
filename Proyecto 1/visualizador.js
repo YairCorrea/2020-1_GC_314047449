@@ -48,18 +48,15 @@ window.addEventListener("load", function(evt) {
         let verteY=dataStruct[1];
         let faces= dataStruct[3];
         ctx.clearRect(0,0,canvas.width,canvas.height);
-        for(let i=0;i<verteX.length;i++){
+        /*for(let i=0;i<verteX.length;i++){
             ctx.strokeRect(verteX[i],verteY[i],1,1);
-        }
+        }*/
         ctx.beginPath();
         let counter=0;
         faces.forEach(function drawFace(face){
             ctx.moveTo(verteX[face[0]],verteY[face[0]]);
             ctx.lineTo(verteX[face[1]],verteY[face[1]]);
-            ctx.moveTo(verteX[face[1]],verteY[face[1]]);
             ctx.lineTo(verteX[face[2]],verteY[face[2]]);
-            ctx.moveTo(verteX[face[2]],verteY[face[2]]);
-            ctx.lineTo(verteX[face[0]],verteY[face[0]]);
             counter++;
         });
         console.log("Dibuje "+counter+" poligonos");
@@ -73,8 +70,8 @@ window.addEventListener("load", function(evt) {
         let Xmax=dataStruct[4][0];
         let Ymax=dataStruct[4][1];
        for(let i=0;i<verteX.length;i++){
-           verteY[i]=(maYScreen*(verteY[i]-Ymin)/(Ymax-Ymin))-Ymax;
-           verteX[i]=(maXScreen*(verteX[i]-Xmin)/(Xmax-Xmin))-Xmax;
+           verteY[i]=(maYScreen*(verteY[i]-Ymin)/(Ymax-Ymin));
+           verteX[i]=(-maXScreen*(verteX[i]-Xmin)/(Xmax-Xmin));
        }
        return dataStruct;
     }
@@ -93,7 +90,7 @@ window.addEventListener("load", function(evt) {
         let maxX=dataStruct[4][0];
         let maxY=dataStruct[4][1];
         let maxZ=dataStruct[4][2];
-        let trans=CG.Matrix4.translate(new CG.Vector3(-minX,-minY,-minZ));
+        let trans=CG.Matrix4.translate(new CG.Vector3(0,0,0));
         for(let i=0;i<verteX.length;i++){
             let tmp=trans.multiplyVector(new CG.Vector4(verteX[i],verteY[i],verteZ[i],1));
             verteX[i]=tmp.x;
@@ -120,7 +117,7 @@ window.addEventListener("load", function(evt) {
         let maxX=dataStruct[4][0];
         let maxY=dataStruct[4][1];
         let maxZ=dataStruct[4][2];
-        let eye=new CG.Vector3(valorX.value,valorY.value,valorZ.value);
+        let eye=new CG.Vector3(0,1,1);
         let at=new CG.Vector3((maxX+minX)/2,(maxY+minY)/2,(maxZ+minZ)/2);
         let globos=new CG.Vector3(0,1,0);
         let lineOf=CG.Matrix4.lookAt(eye,at,globos);
@@ -177,7 +174,7 @@ window.addEventListener("load", function(evt) {
        let maxX=dataStruct[4][0];
        let maxY=dataStruct[4][1];
        let maxZ=dataStruct[4][2];
-       let frust=CG.Matrix4.perspective(.5,(maxX-minX)*canvas.width/(maxY-minY)*canvas.height,minZ,maxZ);
+       let frust=CG.Matrix4.perspective(.3,1,maxZ,minZ);
        for(let foo=0;foo<verteX.length;foo++){
            let bar=frust.multiplyVector(new CG.Vector4(verteX[foo],verteY[foo],verteZ[foo],1));
            verteX[foo]=bar.x;
