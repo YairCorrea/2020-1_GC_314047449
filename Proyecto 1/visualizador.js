@@ -5,7 +5,8 @@ window.addEventListener("load", function(evt) {
     let valorX=document.getElementById("x");
     let valorY=document.getElementById("y");
     let valorZ=document.getElementById("z");
-    let fil;
+    let fovvy=document.getElementById("fov");
+    let lines;
     /**
      * Funcion que lee una linea y altera el entorno para representar los datos contenidos en esta.
      * @param line  Una sola linea del archivo OBJ.
@@ -32,7 +33,7 @@ window.addEventListener("load", function(evt) {
                 if(z<dataStruct[5][2])dataStruct[5][2]=z;
                 break;
             case "f":
-                dataStruct[3].push([le[1].split('/')[0],le[2].split('/')[0],le[3].split('/')[0]]);
+                dataStruct[3].push([parseInt(le[1].split('/')[0]),parseInt(le[2].split('/')[0]),parseInt(le[3].split('/')[0])]);
                 break;
             default://Do nothing. We don't really care about typos or other stuff.
                 break;
@@ -48,15 +49,18 @@ window.addEventListener("load", function(evt) {
         let verteY=dataStruct[1];
         let faces= dataStruct[3];
         ctx.clearRect(0,0,canvas.width,canvas.height);
-        /*for(let i=0;i<verteX.length;i++){
-            ctx.strokeRect(verteX[i],verteY[i],1,1);
-        }*/
         ctx.beginPath();
         let counter=0;
         faces.forEach(function drawFace(face){
             ctx.moveTo(verteX[face[0]],verteY[face[0]]);
             ctx.lineTo(verteX[face[1]],verteY[face[1]]);
             ctx.lineTo(verteX[face[2]],verteY[face[2]]);
+            ctx.moveTo(verteX[face[1]],verteY[face[1]]);
+            ctx.lineTo(verteX[face[0]],verteY[face[0]]);
+            ctx.lineTo(verteX[face[2]],verteY[face[2]]);
+            ctx.moveTo(verteX[face[2]],verteY[face[2]]);
+            ctx.lineTo(verteX[face[1]],verteY[face[1]]);
+            ctx.lineTo(verteX[face[0]],verteY[face[0]]);
             counter++;
         });
         console.log("Dibuje "+counter+" poligonos");
@@ -71,7 +75,7 @@ window.addEventListener("load", function(evt) {
         let Ymax=dataStruct[4][1];
        for(let i=0;i<verteX.length;i++){
            verteY[i]=(maYScreen*(verteY[i]-Ymin)/(Ymax-Ymin));
-           verteX[i]=(-maXScreen*(verteX[i]-Xmin)/(Xmax-Xmin));
+           verteX[i]=(maXScreen*(verteX[i]-Xmin)/(Xmax-Xmin));
        }
        return dataStruct;
     }
@@ -90,7 +94,7 @@ window.addEventListener("load", function(evt) {
         let maxX=dataStruct[4][0];
         let maxY=dataStruct[4][1];
         let maxZ=dataStruct[4][2];
-        let trans=CG.Matrix4.translate(new CG.Vector3(0,0,0));
+        let trans=CG.Matrix4.translate(new CG.Vector3(minX,minY,minZ));
         for(let i=0;i<verteX.length;i++){
             let tmp=trans.multiplyVector(new CG.Vector4(verteX[i],verteY[i],verteZ[i],1));
             verteX[i]=tmp.x;
@@ -117,7 +121,7 @@ window.addEventListener("load", function(evt) {
         let maxX=dataStruct[4][0];
         let maxY=dataStruct[4][1];
         let maxZ=dataStruct[4][2];
-        let eye=new CG.Vector3(0,1,1);
+        let eye=new CG.Vector3(parseFloat(valorX.value),parseFloat(valorY.value),parseFloat(valorZ.value));
         let at=new CG.Vector3((maxX+minX)/2,(maxY+minY)/2,(maxZ+minZ)/2);
         let globos=new CG.Vector3(0,1,0);
         let lineOf=CG.Matrix4.lookAt(eye,at,globos);
@@ -147,7 +151,7 @@ window.addEventListener("load", function(evt) {
        let maxX=dataStruct[4][0];
        let maxY=dataStruct[4][1];
        let maxZ=dataStruct[4][2];
-       let frust=CG.Matrix4.frustum(minX,maxX,minY,maxY,minZ,maxZ);
+       let frust=CG.Matrix4.frustum(-1,1,-1,1,-1,1);
        for(let foo=0;foo<verteX.length;foo++){
            let bar=frust.multiplyVector(new CG.Vector4(verteX[foo],verteY[foo],verteZ[foo],1));
            verteX[foo]=bar.x;
@@ -174,7 +178,7 @@ window.addEventListener("load", function(evt) {
        let maxX=dataStruct[4][0];
        let maxY=dataStruct[4][1];
        let maxZ=dataStruct[4][2];
-       let frust=CG.Matrix4.perspective(.3,1,maxZ,minZ);
+       let frust=CG.Matrix4.perspective(parseFloat(fovvy.value),canvas.width/canvas.height,0,2000);
        for(let foo=0;foo<verteX.length;foo++){
            let bar=frust.multiplyVector(new CG.Vector4(verteX[foo],verteY[foo],verteZ[foo],1));
            verteX[foo]=bar.x;
@@ -191,8 +195,18 @@ window.addEventListener("load", function(evt) {
        minZ=tm.z;
        return dataStruct;
    }
-   function ejecuta() {
-       let parsedData=aMundo(fil);
+   function execute() {
+       let faces = [];
+       let verteX = [];
+       let verteY = [];
+       let verteZ = [];
+       let biggestBoi = [0, 0, 0];
+       let smollBoi = [0, 0, 0];
+       let parsedData = [verteX, verteY, verteZ, faces, biggestBoi, smollBoi];
+       for (let line = 0; line < lines.length; line++) {
+           parsedData = parse(lines[line], parsedData);
+       }
+       parsedData=aMundo(parsedData);
        parsedData=viewTransform(parsedData);
        parsedData=frustumView(parsedData);
        parsedData=perspectivePro(parsedData);
@@ -206,28 +220,20 @@ window.addEventListener("load", function(evt) {
         let files = evt.target.files;
         let reader = new FileReader();
         reader.onload = function(reader_evt) {
-                let lines = reader_evt.target.result.split('\n');
-                let faces = [];
-                let verteX = [];
-                let verteY = [];
-                let verteZ = [];
-                let biggestBoi = [0, 0, 0];
-                let smollBoi = [0, 0, 0];
-                let parsedData = [verteX, verteY, verteZ, faces, biggestBoi, smollBoi];
-                for (let line = 0; line < lines.length; line++) {
-                    fil = parse(lines[line], parsedData);
-                }
-                ejecuta();
+                if(evt.target===file_input)lines = reader_evt.target.result.split('\n');
+                execute();
         };
+        if(evt.target!==file_input){
+            execute();
+            return;
+        }
         if (files.length > 0) {
             reader.readAsText(files[0]);
         }
     }
-    function uList(evt){
-        ejecuta();
-    }
     file_input.addEventListener("change",cambios);
-    valorX.addEventListener("change",uList);
-    valorY.addEventListener("change",uList);
-    valorZ.addEventListener("change",uList);
+    fovvy.addEventListener("change",cambios);
+    valorX.addEventListener("change",cambios);
+    valorY.addEventListener("change",cambios);
+    valorZ.addEventListener("change",cambios);
 });
