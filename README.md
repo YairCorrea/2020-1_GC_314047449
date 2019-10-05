@@ -8,4 +8,4 @@ Carlos Alexis Alvarez de la Rosa  (314355456)
 # E-mail #
 yairCorrea@ciencias.unam.mx
 ## Descripción 
-Repositorio para el curso de graficaci\'{o}n por computadora
+Repositorio para el curso de graficaci&oacute;n por computadora
