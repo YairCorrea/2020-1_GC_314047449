@@ -243,8 +243,8 @@ CG = (function (CG) {
 		 * @param far
 		 */
 		static perspective(fovy,aspect,near,far){
-			let S= Math.atan(fovy/2);
-			return new CG.Matrix4(S/aspect,0,0,0,0,S,0,0,0,0,-far/(far-near),-1,-(far*near)/(far-near),0,(near*far)/(far-near),0);
+			let S= 1/Math.tan(fovy/2);
+			return new CG.Matrix4(S/aspect,0,0,0,0,S,0,0,0,0,far/(near-far),(far*near)/(near-far),0,0,-1,0);
 		}
 
 		/**
