@@ -9,29 +9,44 @@ var CG=(function (CG) {
          * @param length {Number}
          * @param initial_transform {Matrix4}
          */
-        constructor(gl,color,width,height,length,initial_transform){
+        constructor(gl,color,width,initial_transform){
+            width = (width || 1)/3;
+            var goldenRatio = 1.6180339887;
+            let width_m_goldenRatio = width*goldenRatio;
             //Declaracion de los vertices que componen al objeto
-            let vertices=[0,0,0,
-                width,0,0,
-                0,0,length,
-                width,0,length,
-                0,height,0,
-                width,height,0,
-                0,height,length,
-                width,height,length];
+            let vertices=[0,  width,  width_m_goldenRatio,
+                0,  width, -width_m_goldenRatio,
+                0, -width,  width_m_goldenRatio,
+                0, -width, -width_m_goldenRatio,
+                 width,  width_m_goldenRatio, 0,
+                 width, -width_m_goldenRatio, 0,
+                -width,  width_m_goldenRatio, 0,
+                -width, -width_m_goldenRatio, 0,
+                 width_m_goldenRatio, 0,  width,
+                 width_m_goldenRatio, 0, -width,
+                -width_m_goldenRatio, 0,  width,
+                -width_m_goldenRatio, 0, -width];
             //Declaracion de las caras que componen al objeto.
-            let faceIndexes=[6,4,0,
-                6,0,2,
-                1,4,0,
-                5,4,1,
-                7,5,1,
-                3,7,1,
-                7,4,5,
-                4,7,6,
-                3,7,6,
-                3,6,2,
-                3,2,0,
-                3,0,1];
+            let faceIndexes=[ 10, 0, 2,
+                0, 8, 2,
+                8, 5, 2,
+                5, 7, 2,
+                7, 10, 2,
+                6, 0, 10,
+                11, 6, 10,
+                7, 11, 10,
+                7, 3, 11,
+                5, 3, 7,
+                9, 3, 5,
+                8, 9, 5,
+                4, 9, 8,
+                0, 4, 8,
+                6, 4, 0,
+                11, 3, 1,
+                6, 11, 1,
+                4, 6, 1,
+                9, 4, 1,
+                3, 9, 1];
            //Crea buffer de vertices.
             this.positionBuffer=gl.createBuffer();
             gl.bindBuffer(gl.ARRAY_BUFFER,this.positionBuffer);

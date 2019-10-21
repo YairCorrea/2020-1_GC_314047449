@@ -4,34 +4,49 @@ var CG=(function (CG) {
          *Constructor de la clase.
          * @param gl {WebGLRenderingContext} Referencia al contexto de WebGL
          * @param color {Number[]} Arreglo con tres elementos, [R,G,B], con valores entre 0 y 1 cada uno de ellos.
-         * @param width {Number}
-         * @param height {Number}
-         * @param length {Number}
+         * @param major_radius
+         * @param minor_radius
+         * @param Nu
+         * @param Nv
          * @param initial_transform {Matrix4}
          */
-        constructor(gl,color,width,height,length,initial_transform){
+        constructor(gl,color,major_radius,minor_radius,Nu,Nv,initial_transform){
             //Declaracion de los vertices que componen al objeto
-            let vertices=[0,0,0,
-                width,0,0,
-                0,0,length,
-                width,0,length,
-                0,height,0,
-                width,height,0,
-                0,height,length,
-                width,height,length];
-            //Declaracion de las caras que componen al objeto.
-            let faceIndexes=[6,4,0,
-                6,0,2,
-                1,4,0,
-                5,4,1,
-                7,5,1,
-                3,7,1,
-                7,4,5,
-                4,7,6,
-                3,7,6,
-                3,6,2,
-                3,2,0,
-                3,0,1];
+            let R = (major_radius || 1)/2;
+            let r = (minor_radius || 1)/2;
+            Nu = Nu || 2;
+            Nv = Nv || 2;
+
+            let vertices = [];
+
+            for (let i=0; i<Nv+1; i++) {
+                for (let j=0; j<Nu; j++) {
+                    vertices.push(
+                        -(R + r * Math.sin(2*Math.PI*j/Nu)) * Math.sin(2*Math.PI*i/Nv),
+                        r * Math.cos(2*Math.PI*j/Nu),
+                        (R + r * Math.sin(2*Math.PI*j/Nu)) * Math.cos(2*Math.PI*i/Nv),
+                    );
+                }
+            }
+
+            let faceIndexes = [];
+
+            let pos1;
+            let pos2;
+            let pos3;
+            let pos4;
+            for (let i=0; i<Nv; i++) {
+                for (let j=0; j<Nu; j++) {
+                    pos1=j +i*Nu;
+                    pos2=j +(i+1)*Nu;
+                    pos3=(j+1)%Nu +(i+1)*Nu;
+                    pos4=(j+1)%Nu +i*Nu;
+                    faceIndexes.push(
+                        pos1,pos2,pos4,
+                        pos2,pos3,pos4
+                    );
+                }
+            }
            //Crea buffer de vertices.
             this.positionBuffer=gl.createBuffer();
             gl.bindBuffer(gl.ARRAY_BUFFER,this.positionBuffer);

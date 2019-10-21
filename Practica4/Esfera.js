@@ -4,35 +4,60 @@ var CG=(function (CG) {
          *Constructor de la clase.
          * @param gl {WebGLRenderingContext} Referencia al contexto de WebGL
          * @param color {Number[]} Arreglo con tres elementos, [R,G,B], con valores entre 0 y 1 cada uno de ellos.
-         * @param width {Number}
-         * @param height {Number}
-         * @param length {Number}
+         * @param radius
+         * @param Nu
+         * @param Nv
          * @param initial_transform {Matrix4}
          */
-        constructor(gl,color,width,height,length,initial_transform){
+        constructor(gl,color,radius,Nu,Nv,initial_transform){
+              radius = radius || 1;
+              Nu = Nu || 2;
+              Nv = Nv || 2;
             //Declaracion de los vertices que componen al objeto
-            let vertices=[0,0,0,
-                width,0,0,
-                0,0,length,
-                width,0,length,
-                0,height,0,
-                width,height,0,
-                0,height,length,
-                width,height,length];
+            let vertices=[];
+            let phi;
+            let theta;
+            vertices.push(0, radius, 0);
+            for (let i=1; i<Nu; i++) {
+                phi = (i*Math.PI)/Nu;
+
+                for (let j=0; j<Nv; j++) {
+                    theta = (j*2*Math.PI)/Nv;
+
+                    let x = radius * Math.sin(phi) * Math.cos(theta);
+                    let y = radius * Math.cos(phi);
+                    let z = radius * Math.sin(phi) * Math.sin(theta);
+
+                    vertices.push(x, y, z);                }
+            }
+            vertices.push(0, -radius, 0);
             //Declaracion de las caras que componen al objeto.
-            let faceIndexes=[6,4,0,
-                6,0,2,
-                1,4,0,
-                5,4,1,
-                7,5,1,
-                3,7,1,
-                7,4,5,
-                4,7,6,
-                3,7,6,
-                3,6,2,
-                3,2,0,
-                3,0,1];
-           //Crea buffer de vertices.
+            let faceIndexes=[];
+            for (let i=0; i<Nv; i++) {
+                faceIndexes.push(
+                    0,
+                    ((i+1)%Nv)+1,
+                    (i%Nv)+1
+                );
+            }
+            for (let i=1; i<Nu-1; i++) {
+                for (let j=0; j<Nv; j++) {
+                    faceIndexes.push(
+                        j+1 +(i-1)*Nv,
+                        (j+1)%Nv +1 +(i-1)*Nv,
+                        (j+1)%Nv +1 +i*Nv,
+                        j+1 +i*Nv
+                    );
+                }
+            }
+            for (let i=0; i<Nv; i++) {
+                faceIndexes.push(
+                    vertices.length-1,
+                    vertices.length-1-Nv +i,
+                    vertices.length-1-Nv +((i+1)%Nv)
+                );
+            }
+            //Crea buffer de vertices.
             this.positionBuffer=gl.createBuffer();
             gl.bindBuffer(gl.ARRAY_BUFFER,this.positionBuffer);
             gl.bufferData(gl.ARRAY_BUFFER,new Float32Array(vertices),gl.STATIC_DRAW);

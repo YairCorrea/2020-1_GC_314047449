@@ -9,29 +9,71 @@ var CG=(function (CG) {
          * @param length {Number}
          * @param initial_transform {Matrix4}
          */
-        constructor(gl,color,width,height,length,initial_transform){
+        constructor(gl,color,width,initial_transform){
+            width = (width || 1)/Math.PI;
+            let goldenRatio = 1.6180339887;
+
+            let width_m_goldenRatio = width*goldenRatio;
+            let width_d_goldenRatio = width/goldenRatio;
             //Declaracion de los vertices que componen al objeto
-            let vertices=[0,0,0,
-                width,0,0,
-                0,0,length,
-                width,0,length,
-                0,height,0,
-                width,height,0,
-                0,height,length,
-                width,height,length];
+            let vertices=[ width,  width,  width,
+                 width,  width, -width,
+                 width, -width,  width,
+                    width, -width, -width,
+                    -width,  width,  width,
+                -width,  width, -width,
+                -width, -width,  width,
+                -width, -width, -width,
+                0,  width_d_goldenRatio,  width_m_goldenRatio,
+                0,  width_d_goldenRatio, -width_m_goldenRatio,
+                0, -width_d_goldenRatio,  width_m_goldenRatio,
+                0, -width_d_goldenRatio, -width_m_goldenRatio,
+                 width_d_goldenRatio,  width_m_goldenRatio, 0,
+                 width_d_goldenRatio, -width_m_goldenRatio, 0,
+                -width_d_goldenRatio,  width_m_goldenRatio, 0,
+                -width_d_goldenRatio, -width_m_goldenRatio, 0,
+                 width_m_goldenRatio, 0,  width_d_goldenRatio,
+                 width_m_goldenRatio, 0, -width_d_goldenRatio,
+                -width_m_goldenRatio, 0,  width_d_goldenRatio,
+                -width_m_goldenRatio, 0, -width_d_goldenRatio ];
             //Declaracion de las caras que componen al objeto.
-            let faceIndexes=[6,4,0,
-                6,0,2,
-                1,4,0,
-                5,4,1,
-                7,5,1,
-                3,7,1,
-                7,4,5,
-                4,7,6,
-                3,7,6,
-                3,6,2,
-                3,2,0,
-                3,0,1];
+            let faceIndexes=[
+                0,16,10,
+                16,10,2,
+                2,10,8,
+                12,1,16,
+                1,16,17,
+                17,16,0,
+                8,4,12,
+                4,12,14,
+                14,12,0,
+                2,16,3,
+                16,3,17,
+                17,3,13,
+                13,15,10,
+                15,10,6,
+                6,10,2,
+                6,18,8,
+                18,8,4,
+                4,8,10,
+                3,17,9,
+                17,9,1,
+                1,9,11,
+                13,3,7,
+                3,7,11,
+                11,7,15,
+                1,12,5,
+                12,5,14,
+                14,5,9,
+                11,9,19,
+                9,19,5,
+                5,19,7,
+                5,14,18,
+                14,18,4,
+                4,18,19,
+                6,15,19,
+                15,19,7,
+                7,19,18];
            //Crea buffer de vertices.
             this.positionBuffer=gl.createBuffer();
             gl.bindBuffer(gl.ARRAY_BUFFER,this.positionBuffer);

@@ -1,4 +1,3 @@
-//TODO: Mostrar la utilizacion de los objetos geometricos.
 //TODO: Checkbox para activar o desactivar Phong
 window.addEventListener("load",function () {
     let canvas=document.getElementById("the_canvas");
@@ -21,15 +20,12 @@ window.addEventListener("load",function () {
     let VM_matrixLocation=gl.getUniformLocation(program,"u_VM_matrix");
     let PVM_matrixLocation=gl.getUniformLocation(program,"u_PVM_matrix");
     let color=[1,0.4,0.5];
-    let width=1;
-    let height=2;
-    let length=4;
     let identity= new CG.Matrix4();
 
     let geometry= [
-        new CG.PrismaRectangular(gl,color,width,height,length,identity),
-        new CG.PrismaRectangular(gl,color,width,height,length,CG.Matrix4.translate(new CG.Vector3(2,0,0))),
-        new CG.PrismaRectangular(gl,color,width,height,length,CG.Matrix4.translate(new CG.Vector3(-2,0,0))),
+        new CG.Octaedro(gl,color,2,identity),
+        new CG.Icosaedro(gl,color,2,CG.Matrix4.translate(new CG.Vector3(4,2,0))),
+        new CG.Tetraedro(gl,color,2,CG.Matrix4.translate(new CG.Vector3(-2,-2,0))),
     ];
 
     gl.clearColor(0,0,0,0);

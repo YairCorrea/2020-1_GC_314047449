@@ -9,29 +9,20 @@ var CG=(function (CG) {
          * @param length {Number}
          * @param initial_transform {Matrix4}
          */
-        constructor(gl,color,width,height,length,initial_transform){
+        constructor(gl,color,width,initial_transform){
+            width = (width || 1);
+
+            let angle = 2*Math.PI/3;
+            let x = width*2*Math.sqrt(2)/3;
+            let y = 0;
+            let z = -width/3;
+            let x0 =  x*Math.cos(angle) + y*Math.sin(angle);
+            let y0 = -x*Math.sin(angle) + y*Math.cos(angle);
+
             //Declaracion de los vertices que componen al objeto
-            let vertices=[0,0,0,
-                width,0,0,
-                0,0,length,
-                width,0,length,
-                0,height,0,
-                width,height,0,
-                0,height,length,
-                width,height,length];
+            let vertices=[ 0, 0, width, x0, y0, z, x0, -y0, z, x, y, z ];
             //Declaracion de las caras que componen al objeto.
-            let faceIndexes=[6,4,0,
-                6,0,2,
-                1,4,0,
-                5,4,1,
-                7,5,1,
-                3,7,1,
-                7,4,5,
-                4,7,6,
-                3,7,6,
-                3,6,2,
-                3,2,0,
-                3,0,1];
+            let faceIndexes=[1, 3, 2, 0, 1, 2, 0, 2, 3, 0, 3, 1];
            //Crea buffer de vertices.
             this.positionBuffer=gl.createBuffer();
             gl.bindBuffer(gl.ARRAY_BUFFER,this.positionBuffer);
