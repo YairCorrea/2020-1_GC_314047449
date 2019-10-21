@@ -33,6 +33,10 @@ var CG=(function (CG) {
             vertices.push(0, -radius, 0);
             //Declaracion de las caras que componen al objeto.
             let faceIndexes=[];
+            let pos1;
+            let pos2;
+            let pos3;
+            let pos4;
             for (let i=0; i<Nv; i++) {
                 faceIndexes.push(
                     0,
@@ -42,11 +46,13 @@ var CG=(function (CG) {
             }
             for (let i=1; i<Nu-1; i++) {
                 for (let j=0; j<Nv; j++) {
+                    pos1=j+1 +(i-1)*Nv;
+                    pos2=(j+1)%Nv +1 +(i-1)*Nv;
+                    pos3=(j+1)%Nv +1 +i*Nv;
+                    pos4=j+1 +i*Nv;
                     faceIndexes.push(
-                        j+1 +(i-1)*Nv,
-                        (j+1)%Nv +1 +(i-1)*Nv,
-                        (j+1)%Nv +1 +i*Nv,
-                        j+1 +i*Nv
+                        pos1,pos2,pos4,
+                        pos2,pos3,pos4
                     );
                 }
             }

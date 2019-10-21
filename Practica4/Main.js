@@ -24,7 +24,7 @@ window.addEventListener("load",function () {
 
     let geometry= [
         new CG.Octaedro(gl,color,2,identity),
-        new CG.Icosaedro(gl,color,2,CG.Matrix4.translate(new CG.Vector3(4,2,0))),
+        new CG.Toro(gl,color,3,2,10,10,CG.Matrix4.translate(new CG.Vector3(0,4,0))),
         new CG.Tetraedro(gl,color,2,CG.Matrix4.translate(new CG.Vector3(-2,-2,0))),
     ];
 
